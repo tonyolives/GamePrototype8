@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour
     public PlayerMovementStats MoveStats;
     [SerializeField] private Collider2D _feetColl;
     [SerializeField] private Collider2D _bodyColl;
+    [SerializeField] private Animator _animator;
 
     private Rigidbody2D _rb;
 
@@ -73,8 +74,13 @@ public class PlayerMovement : MonoBehaviour
     #region Movement
     private void Move(float acceleration, float deceleration, Vector2 moveInput)
     {
+        // there is input to move
         if (moveInput != Vector2.zero)
         {
+            // set animator to running
+            _animator.SetBool("isRunning", true);
+
+            // check if turning character
             TurnCheck(moveInput);
 
             Vector2 targetVelocity = Vector2.zero;
@@ -87,8 +93,12 @@ public class PlayerMovement : MonoBehaviour
             _moveVelocity = Vector2.Lerp(_moveVelocity, targetVelocity, acceleration * Time.fixedDeltaTime);
             _rb.linearVelocity = new Vector2(_moveVelocity.x, _rb.linearVelocity.y);
         }
+        // there is no input to move
         else if (moveInput == Vector2.zero)
         {
+            // set animator to idle
+            _animator.SetBool("isRunning", false);
+
             _moveVelocity = Vector2.Lerp(_moveVelocity, Vector2.zero, deceleration * Time.fixedDeltaTime);
             _rb.linearVelocity = new Vector2(_moveVelocity.x, _rb.linearVelocity.y);
         }
