@@ -21,7 +21,11 @@ MonoBehaviour:
   GroundLayer:
     serializedVersion: 2
     m_Bits: 128
+  EnemyLayer:
+    serializedVersion: 2
+    m_Bits: 256
   GroundDetectionRayLength: 0.02
+  EnemyDetectionRayLength: 0.01
   HeadDetectionRayLength: 0.02
   HeadWidth: 0.75
   JumpHeight: 2

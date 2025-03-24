@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -15,12 +17,16 @@ public class PlayerMovement : MonoBehaviour
     //movement vars
     private Vector2 _moveVelocity;
     private bool _isFacingRight;
+    private bool _canMove;
 
     //collision check vars
     private RaycastHit2D _groundHit;
     private RaycastHit2D _headHit;
+    private RaycastHit2D _enemyHitRight;
+    private RaycastHit2D _enemyHitLeft;
     private bool _isGrounded;
     private bool _bumpedHead;
+    private bool _hitEnemy;
 
     //jump vars
     public float VerticalVelocity { get; private set; }
@@ -46,6 +52,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Awake()
     {
+        _canMove = true;
         _isFacingRight = true;
         _rb = GetComponent<Rigidbody2D>();
     }
@@ -59,13 +66,20 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         CollisionChecks();
-        Jump();
 
-        if (_isGrounded)
+        if (_canMove) {
+            Jump();
+        }
+
+        if (!_canMove) {
+            _rb.linearVelocity = Vector2.zero;
+        }
+
+        if (_isGrounded && _canMove)
         {
             Move(MoveStats.GroundAcceleration, MoveStats.GroundDeceleration, InputManager.Movement);
         }
-        else
+        else if (!_isGrounded && _canMove)
         {
             Move(MoveStats.AirAcceleration, MoveStats.AirDeceleration, InputManager.Movement);
         }
@@ -393,6 +407,29 @@ public class PlayerMovement : MonoBehaviour
     {
         IsGrounded();
         BumpedHead();
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+         Debug.Log($"Collided with: {other.gameObject.name}");
+         
+         // hit enemy
+         if (other.gameObject.CompareTag("Enemy"))
+         {
+            _canMove = false;
+            Debug.Log("Enemy hit!");
+            StartCoroutine(DieWithDelay());
+        }
+    }
+
+    private IEnumerator DieWithDelay()
+    {
+        Debug.Log("DYING...");
+        _animator.SetBool("isDead", true);
+        yield return new WaitForSeconds(1.0f);
+        
+        // next line after delay
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     #endregion
