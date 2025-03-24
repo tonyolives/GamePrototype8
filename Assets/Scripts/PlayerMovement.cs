@@ -11,6 +11,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Collider2D _feetColl;
     [SerializeField] private Collider2D _bodyColl;
     [SerializeField] private Animator _animator;
+    [SerializeField] private AudioSource _audioSource;
 
     private Rigidbody2D _rb;
 
@@ -55,6 +56,7 @@ public class PlayerMovement : MonoBehaviour
         _canMove = true;
         _isFacingRight = true;
         _rb = GetComponent<Rigidbody2D>();
+        _audioSource = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -409,7 +411,22 @@ public class PlayerMovement : MonoBehaviour
         BumpedHead();
     }
 
+    // trigger activation
     private void OnTriggerEnter2D(Collider2D other)
+    {
+         Debug.Log($"Collided with: {other.gameObject.name}");
+         
+         // hit enemy
+         if (other.gameObject.CompareTag("Enemy"))
+         {
+            _canMove = false;
+            Debug.Log("Enemy hit!");
+            StartCoroutine(DieWithDelay());
+        }
+    }
+
+    // collision activation
+    private void OnCollisionEnter2D(Collision2D other)
     {
          Debug.Log($"Collided with: {other.gameObject.name}");
          
@@ -425,6 +442,7 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator DieWithDelay()
     {
         Debug.Log("DYING...");
+        _audioSource.Play();
         _animator.SetBool("isDead", true);
         yield return new WaitForSeconds(1.0f);
         
