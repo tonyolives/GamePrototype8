@@ -196,19 +196,19 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        //DOUBLE JUMP
-        else if (_jumpBufferTimer > 0f && _isJumping && _numberOfJumpsUsed < MoveStats.NumberOfJumpsAllowed)
-        {
-            _isFastFalling = false;
-            InitiateJump(1);
-        }
+        // //DOUBLE JUMP
+        // else if (_jumpBufferTimer > 0f && _isJumping && _numberOfJumpsUsed < MoveStats.NumberOfJumpsAllowed)
+        // {
+        //     _isFastFalling = false;
+        //     InitiateJump(1);
+        // }
 
         //AIR JUMP AFTER COYOTE TIME LAPSED
-        else if (_jumpBufferTimer > 0f && _isFalling && _numberOfJumpsUsed < MoveStats.NumberOfJumpsAllowed - 1)
-        {
-            InitiateJump(2);
-            _isFastFalling = false;
-        }
+        // else if (_jumpBufferTimer > 0f && _isFalling && _numberOfJumpsUsed < MoveStats.NumberOfJumpsAllowed - 1)
+        // {
+        //     InitiateJump(2);
+        //     _isFastFalling = false;
+        // }
 
         //LANDED
         if ((_isJumping || _isFalling) && _isGrounded && VerticalVelocity <= 0f)
@@ -226,6 +226,11 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
+    public void EnemyBoost() {
+        InitiateJump(1);
+
+        Debug.Log("enemy boost");
+    }
     private void InitiateJump(int numberOfJumpsUsed)
     {
         Debug.Log($"Jumps Used: {_numberOfJumpsUsed}, IsJumping: {_isJumping}, Buffer: {_jumpBufferTimer}");
